@@ -3,7 +3,6 @@ import { LoaderCircle } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,7 +31,7 @@ export default function Register() {
     };
 
     return (
-        <AuthLayout title="Create an account" description="Enter your details below to create your account">
+        <AuthLayout title="Welcome!" description="You are setting up Meeting Scheduler for the first time. Enter your details below to create your account as an administrator and get started using this application.">
             <Head title="Register" />
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
@@ -107,11 +106,16 @@ export default function Register() {
                     </Button>
                 </div>
 
-                <div className="text-center text-sm text-muted-foreground">
+                {/* <div className="text-center text-sm text-muted-foreground">
                     Already have an account?{' '}
                     <TextLink href={route('login')} tabIndex={6}>
                         Log in
                     </TextLink>
+                </div> */}
+
+                <div className="text-center text-sm text-muted-foreground">
+                    You should see this page if you're setting up the application for the first time. If you are seeing this page after
+                    setting up, your data could be lost.
                 </div>
             </form>
         </AuthLayout>

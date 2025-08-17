@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientRepresentativeController;
+use App\Http\Controllers\UtilityController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -8,11 +11,11 @@ use Inertia\Inertia;
 // })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
+    Route::get('/', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-        Route::get('schedule', function () {
+    Route::get('schedule', function () {
         return Inertia::render('schedule');
     })->name('schedule');
 
@@ -25,13 +28,40 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('users');
 
     Route::get('clients', function () {
-        return Inertia::render('clients');
+        return Inertia::render('clients/clients');
     })->name('clients');
 
-    Route::get('clients/add', function() {
-        return Inertia::render('add-client');
+    Route::get('clients/add', [ClientController::class, 'index_add'])->name('clients.add');
+
+
+    // API Routes
+    Route::prefix('api')->group(function () {
+        // Route::get('/test', function() {
+        //     return "Hello World";
+        // });
+
+        Route::middleware('auth:sanctum')->group(function () {
+
+            //Users
+            Route::prefix('users')->group(function () {});
+
+            //Clients
+            Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
+            Route::get('clients/{client}', [ClientController::class, 'show'])->name('clients.read');
+            Route::post('clients', [ClientController::class, 'store'])->name('clients.create');
+            Route::patch('clients/{client}', [ClientController::class, 'edit'])->name('clients.edit');
+
+            //Meetings
+            Route::prefix('meetings')->group(function () {});
+
+            //Utilities
+            Route::prefix('utility')->group(function() {
+               Route::get('country-code', [UtilityController::class, 'country_code'])->name('utility.country-code'); 
+            });
+
+        });
     });
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

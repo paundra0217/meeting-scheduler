@@ -7,6 +7,8 @@ use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Policies\ClientPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 #[UsePolicy(ClientPolicy::class)]
@@ -22,6 +24,21 @@ class ClientController extends Controller
         return response()->json($clients);
     }
 
+    /**
+     * Page for displaying Add Client page, user requires admin permission.
+     */
+    public function index_add(Request $request) 
+    {
+        if ($request->user()->admin == 1) 
+        {
+            return Inertia::render('clients/add-client');
+        }
+        else
+        {
+            return redirect()->back();
+        }
+    }
+
     // /**
     //  * Show the form for creating a new resource.
     //  */
@@ -35,7 +52,7 @@ class ClientController extends Controller
      */
     public function store(StoreClientRequest $request)
     {
-        //
+        Log::info($request);
     }
 
     /**
@@ -68,5 +85,14 @@ class ClientController extends Controller
     public function destroy(Client $client)
     {
         //
+    }
+
+    /**
+     * Check for duplication when registering/updating clients.
+     * Note: This does not enforce each client must have unique information.
+     */
+    public function check_for_duplication(StoreClientRequest $request) 
+    {
+
     }
 }
