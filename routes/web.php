@@ -27,11 +27,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('users');
     })->name('users');
 
-    Route::get('clients', function () {
-        return Inertia::render('clients/clients');
-    })->name('clients');
+    Route::get('clients', [ClientController::class, 'index'])->name('clients');
+    Route::get('clients/add', [ClientController::class, 'create'])->name('clients.add');
+    Route::get('clients/edit', function() {
+        return redirect()->route('clients');
+    });
+    Route::get('clients/view/{id}', [ClientController::class, 'show'])->name('clients.view');
+    Route::get('clients/edit', function() {
+        return redirect()->route('clients.add');
+    });
+    Route::get('clients/edit/{id}', [ClientController::class, 'edit'])->name('clients.edit');
 
-    Route::get('clients/add', [ClientController::class, 'index_add'])->name('clients.add');
+    Route::get('configuration', function () {
+        return Inertia::render('configuration/configuration');
+    })->name('configuration');
 
 
     // API Routes
@@ -46,19 +55,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::prefix('users')->group(function () {});
 
             //Clients
-            Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
-            Route::get('clients/{client}', [ClientController::class, 'show'])->name('clients.read');
-            Route::post('clients', [ClientController::class, 'store'])->name('clients.create');
-            Route::patch('clients/{client}', [ClientController::class, 'edit'])->name('clients.edit');
+            Route::get('clients', [ClientController::class, 'index'])->name('api.clients.index');
+            Route::get('clients/{client}', [ClientController::class, 'show'])->name('api.clients.read');
+            Route::post('clients', [ClientController::class, 'store'])->name('api.clients.create');
+            Route::patch('clients/{id}', [ClientController::class, 'edit'])->name('api.clients.edit');
+            Route::delete('clients/{id}', [ClientController::class, 'destroy'])->name('api.clients.delete');
 
             //Meetings
             Route::prefix('meetings')->group(function () {});
 
             //Utilities
-            Route::prefix('utility')->group(function() {
-               Route::get('country-code', [UtilityController::class, 'country_code'])->name('utility.country-code'); 
+            Route::prefix('utility')->group(function () {
+                Route::get('country-code', [UtilityController::class, 'country_code'])->name('api.utility.country-code');
             });
-
         });
     });
 });

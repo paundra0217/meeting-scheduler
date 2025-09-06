@@ -1,7 +1,8 @@
+import ClientListCard from '@/components/client-list-card';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { ClientListCardData, type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -11,7 +12,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Clients() {
+const clientData: ClientListCardData = {
+    id: '1',
+    name: 'Jane Doe Company',
+    added: '2025-07-15T13:41:00+07:00',
+    edited: '2025-08-22T08:31:00+07:00',
+    upcoming_meetings: 1,
+};
+
+export default function Clients({ status }: { status?: number }) {
+    console.log(status);
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Clients" />
@@ -19,7 +30,7 @@ export default function Clients() {
 
             </main> */}
 
-            <main className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <main className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl px-4 py-6">
                 <div className="flex justify-between">
                     <Heading
                         title="Clients"
@@ -29,7 +40,13 @@ export default function Clients() {
                         <Link href={route('clients.add')}>Add Client</Link>
                     </Button>
                 </div>
-                This is a Clients page.
+                <div className="flex flex-col gap-4">
+                    <ClientListCard data={clientData} />
+                    <ClientListCard data={clientData} />
+                    <ClientListCard data={clientData} />
+                    <ClientListCard data={clientData} />
+                    <ClientListCard data={clientData} />
+                </div>
             </main>
         </AppLayout>
     );

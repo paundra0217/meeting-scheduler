@@ -3,13 +3,11 @@ import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import AppLayout from '@/layouts/app-layout';
-import { SharedData, type BreadcrumbItem } from '@/types';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { ClientData, type BreadcrumbItem } from '@/types';
+import { Head, useForm } from '@inertiajs/react';
 import axios from 'axios';
 import { FormEventHandler, useEffect, useState } from 'react';
 
@@ -24,78 +22,41 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-type ClientForm = {
-    name: string;
-    email: string;
-    phone_code: string;
-    address: string;
-    phone: string;
-    is_organization: string;
-};
-
-type CountryCodeList = {
+type CountryCode = {
     name: string;
     code: string;
-    image: string;
     dial_code: string;
-    emoji: string;
 };
 
-const countryCodeFlagBaseURL = 'https://country-code-au6g.vercel.app/';
+// const countryCodeFlagBaseURL = 'https://country-code-au6g.vercel.app/';
 
 // const rawRoute: any = route('');
 
-export default function AddClient() {
-    const { auth } = usePage<SharedData>().props;
+export default function ClientForm({ id, clientData }: {id: number, clientData?: ClientData}) {
+    // const { auth } = usePage<SharedData>().props;
 
-    const { data, setData, errors, processing } = useForm<Required<ClientForm>>({
+    console.log(clientData);
+    console.log(id);
+
+    const { data, setData, errors, processing, post, patch } = useForm<Required<ClientData>>({
+        id: '',
         name: '',
         address: '',
         email: '',
         phone_code: '',
         phone: '',
-        is_organization: '',
     });
 
-    // const servicesApi = axios.create({
-    //     baseURL: rawRoute.t.url,
-    //     headers: {
-    //         'X-Requested-With': 'XMLHttpRequest',
-    //         Accept: 'application/json',
-    //         'Content-Type': 'application/json',
-    //     },
-    //     withCredentials: true,
-    //     withXSRFToken: true,
-    // });
+    // console.log(auth.user);
 
-    // const initializeCsrf = async () => {
-    //     await axios.get('/sanctum/csrf-cookie', {
-    //         baseURL: rawRoute.t.url, // Replace with your Laravel backend URL
-    //         withCredentials: true, // Ensure cookies are sent
-    //     });
-    // };
-
-    // const fetchCountryCodeList = async () => {
-    //     await initializeCsrf(); // Fetch CSRF token first
-    //     try {
-    //         const response = await axios.get('/api/user', {
-    //             baseURL: rawRoute.t.url,
-    //             withCredentials: true, // Include session cookies
-    //         });
-    //         return response.data; // Should return authenticated user
-    //     } catch (error: any) {
-    //         console.error('Error fetching user:', error.response.status); // 401 if still failing
-    //     }
-    // };
-
-    console.log(auth.user);
-
-    const [countryCodeList, setCountryCodeList] = useState<CountryCodeList[]>([]);
+    const [countryCodeList, setCountryCodeList] = useState<CountryCode[]>([]);
+    const [selectedCountryCode, setSelectedCountryCode] = useState<CountryCode>();
+    const defaultCode = 'ID';
 
     useEffect(() => {
-        axios.get(route('utility.country-code')).then((response) => {
+        axios.get(route('api.utility.country-code')).then((response) => {
             const countries = response.data;
-            countries.sort(function (a: CountryCodeList, b: CountryCodeList) {
+            countries.sort(function (a: CountryCode, b: CountryCode) {
                 const nameA = a.name.toLowerCase();
                 const nameB = b.name.toLowerCase();
                 return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
@@ -104,14 +65,30 @@ export default function AddClient() {
         });
     }, []);
 
+    useEffect(() => {
+        if (countryCodeList.length > 0) {
+            const code = data.phone_code === '' ? defaultCode : data.phone_code;
+            const codeObj = countryCodeList.find((d) => d.code == code);
+            setSelectedCountryCode(codeObj);
+        }
+    }, [countryCodeList, data]);
+
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
+
+        
+        if (id === -1) {
+            post(route('api.clients.add'))
+        } else {
+            patch(route('api.clients.edit'))
+        }
+
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Add Client" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl px-4 py-6">
                 <Heading title="Add Client" description="Add client and their information and representatives here." />
 
                 {/* Loading Section */}
@@ -144,7 +121,7 @@ export default function AddClient() {
                 )}
 
                 {countryCodeList.length > 0 && (
-                    <div className="flex flex-1 flex-col gap-4 lg:flex-row w-full">
+                    <div className="flex w-full flex-1 flex-col gap-4 lg:flex-row">
                         <div className="space-y-12 lg:w-xl">
                             <form onSubmit={submit} className="space-y-6">
                                 <div className="grid gap-2">
@@ -156,7 +133,6 @@ export default function AddClient() {
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
                                         required
-                                        autoComplete="name"
                                         placeholder="Jane Doe Company"
                                     />
 
@@ -169,10 +145,9 @@ export default function AddClient() {
                                     <Input
                                         id="address"
                                         className="mt-1 block w-full"
-                                        value={data.email}
-                                        onChange={(e) => setData('email', e.target.value)}
+                                        value={data.address}
+                                        onChange={(e) => setData('address', e.target.value)}
                                         required
-                                        autoComplete="username"
                                         placeholder="First Street no. 12, Greenwood"
                                     />
 
@@ -189,7 +164,6 @@ export default function AddClient() {
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
                                         required
-                                        autoComplete="username"
                                         placeholder="hello@janedoecompany.com"
                                     />
 
@@ -201,16 +175,17 @@ export default function AddClient() {
 
                                     <span className="mt-1 flex items-center gap-2">
                                         <Select defaultValue="ID" onValueChange={(e) => setData('phone_code', e)}>
-                                            <SelectTrigger className="w-[120px] text-nowrap">
-                                                <SelectValue placeholder="Theme" />
+                                            <SelectTrigger className="w-[96px]">
+                                                <SelectValue placeholder="Theme">
+                                                    {countryCodeList.length > 0 ? <>{selectedCountryCode?.dial_code}</> : <>Loading</>}
+                                                </SelectValue>
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {countryCodeList?.map((e) => {
                                                     return (
                                                         <SelectItem key={e.code} value={e.code}>
                                                             {' '}
-                                                            <img className="h-8 w-12" src={countryCodeFlagBaseURL + e.image} /> {e.dial_code} -{' '}
-                                                            {e.name}
+                                                            {e.name} ({e.dial_code})
                                                         </SelectItem>
                                                     );
                                                 })}
@@ -229,61 +204,13 @@ export default function AddClient() {
                                     <InputError className="mt-2" message={errors.phone} />
                                 </div>
 
-                                {/* <div className="grid gap-2">
-                                    <Label htmlFor="phone">Client Type</Label>
-
-                                    <div className="flex flex-col gap-2">
-                                        <Select onValueChange={(e) => setData('is_organization', e)}>
-                                            <SelectTrigger className="mt-1 w-full">
-                                                <SelectValue placeholder="Client Type" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="0">Individual</SelectItem>
-                                                <SelectItem value="1">Organization</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        <div className="text-xs">
-                                            <p>Individual: Client where the organization just only have one person or an individual.</p>
-                                            <p>
-                                                Organization: Client is an organization, including a company (PT, CV, UD, etc.) or society (Yayasan)
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <InputError className="mt-2" message={errors.phone} />
-                                </div> */}
-
                                 <div className="flex items-center gap-4">
                                     <Button disabled={processing}>Add</Button>
                                 </div>
                             </form>
                         </div>
-                        {data.is_organization === '1' && (
-                            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4 xl:max-w-xl">
-                                <div className="relative h-32 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                                </div>
-                                <ScrollArea className="h-96 w-full rounded-md border p-4">
-                                    <div className='flex flex-col gap-4'>
-                                        <div className="relative h-32 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                                            <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                                        </div>
-                                        <div className="relative h-32 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                                            <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                                        </div>
-                                        <div className="relative h-32 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                                            <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                                        </div>
-                                        <div className="relative h-32 overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                                            <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                                        </div>
-                                    </div>
-                                </ScrollArea>
-                            </div>
-                        )}
                     </div>
                 )}
-                {/* Loaded Form Section */}
             </div>
         </AppLayout>
     );

@@ -17,35 +17,27 @@ class ClientController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $clients = Client::all();
 
-        return response()->json($clients);
+        return Inertia::render('clients/clients', [
+            'clients' => $clients,
+            'status' => 1
+        ]);
     }
 
     /**
-     * Page for displaying Add Client page, user requires admin permission.
+     * Show the form for creating a new resource.
      */
-    public function index_add(Request $request) 
+    public function create(Request $request)
     {
-        if ($request->user()->admin == 1) 
-        {
-            return Inertia::render('clients/add-client');
-        }
-        else
-        {
+        if ($request->user()->admin != 1) {
             return redirect()->back();
-        }
-    }
-
-    // /**
-    //  * Show the form for creating a new resource.
-    //  */
-    // public function create()
-    // {
+        } 
         
-    // }
+        return Inertia::render('clients/client-form');
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -53,22 +45,42 @@ class ClientController extends Controller
     public function store(StoreClientRequest $request)
     {
         Log::info($request);
+
+        return to_route('clients')->with('message', 'Client added!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Client $client)
+    public function show(Request $request, $id)
     {
-        return response()->json($client);
+        if ($request->user()->admin != 1) {
+            return redirect()->back();
+        } 
+
+        // if (empty(trim($id))) {
+        //     abort(404);
+        //     return;
+        // }
+
+        return Inertia::render('clients/view-client');
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Client $client)
+    public function edit(Request $request, $id)
     {
-        //
+        if ($request->user()->admin != 1) {
+            return redirect()->back();
+        } 
+
+        if (empty(trim($id))) {
+            abort(404);
+            return;
+        }
+
+        abort(404);
     }
 
     /**
@@ -91,8 +103,5 @@ class ClientController extends Controller
      * Check for duplication when registering/updating clients.
      * Note: This does not enforce each client must have unique information.
      */
-    public function check_for_duplication(StoreClientRequest $request) 
-    {
-
-    }
+    public function check_for_duplication(StoreClientRequest $request) {}
 }
