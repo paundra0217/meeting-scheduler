@@ -57,7 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             //Clients
             Route::get('clients', [ClientController::class, 'index'])->name('api.clients.index');
             Route::get('clients/{client}', [ClientController::class, 'show'])->name('api.clients.read');
-            Route::post('clients', [ClientController::class, 'store'])->name('api.clients.create');
+            Route::post('clients', [ClientController::class, 'store'])->name('api.clients.add');
             Route::patch('clients/{id}', [ClientController::class, 'edit'])->name('api.clients.edit');
             Route::delete('clients/{id}', [ClientController::class, 'destroy'])->name('api.clients.delete');
 

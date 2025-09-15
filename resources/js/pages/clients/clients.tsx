@@ -12,16 +12,17 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const clientData: ClientListCardData = {
-    id: '1',
-    name: 'Jane Doe Company',
-    added: '2025-07-15T13:41:00+07:00',
-    edited: '2025-08-22T08:31:00+07:00',
-    upcoming_meetings: 1,
-};
+// const clientData: ClientListCardData = {
+//     id: '1',
+//     name: 'Jane Doe Company',
+//     added: '2025-07-15T13:41:00+07:00',
+//     edited: '2025-08-22T08:31:00+07:00',
+//     upcoming_meetings: 1,
+// };
 
-export default function Clients({ status }: { status?: number }) {
+export default function Clients({ status, clients }: { status?: number, clients: ClientListCardData[] }) {
     console.log(status);
+    console.log(clients);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -41,11 +42,11 @@ export default function Clients({ status }: { status?: number }) {
                     </Button>
                 </div>
                 <div className="flex flex-col gap-4">
-                    <ClientListCard data={clientData} />
-                    <ClientListCard data={clientData} />
-                    <ClientListCard data={clientData} />
-                    <ClientListCard data={clientData} />
-                    <ClientListCard data={clientData} />
+                    {clients.map((client) => {
+                        return(
+                            <ClientListCard data={client} />
+                        )
+                    })}
                 </div>
             </main>
         </AppLayout>

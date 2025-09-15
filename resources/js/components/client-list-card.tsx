@@ -6,8 +6,8 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 export default function ClientListCard({ data }: { data: ClientListCardData }) {
-    const added = DateTime.fromISO(data.added);
-    const edited = DateTime.fromISO(data.edited);
+    const added = DateTime.fromISO(data.created_at);
+    const edited = DateTime.fromISO(data.updated_at);
     const addedText = added.toLocaleString(DateTime.DATETIME_FULL);
     const editedText = edited.toLocaleString(DateTime.DATETIME_FULL);
     const lastAdded = added.toRelativeCalendar();

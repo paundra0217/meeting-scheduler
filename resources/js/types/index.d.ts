@@ -55,7 +55,7 @@ export interface ClientData {
 export interface ClientListCardData {
     id: string;
     name: string;
-    added: string;
-    edited: string;
+    created_at: string;
+    updated_at: string;
     upcoming_meetings: number;
 }

@@ -36,7 +36,9 @@ class ClientController extends Controller
             return redirect()->back();
         } 
         
-        return Inertia::render('clients/client-form');
+        return Inertia::render('clients/client-form', [
+            'id' => -1
+        ]);
     }
 
     /**
@@ -44,7 +46,8 @@ class ClientController extends Controller
      */
     public function store(StoreClientRequest $request)
     {
-        Log::info($request);
+        $data = $request->validated();
+        Client::create($data);
 
         return to_route('clients')->with('message', 'Client added!');
     }
@@ -63,7 +66,9 @@ class ClientController extends Controller
         //     return;
         // }
 
-        return Inertia::render('clients/view-client');
+        return Inertia::render('clients/view-client', [
+            'id' => -1
+        ]);
     }
 
     /**
@@ -80,13 +85,15 @@ class ClientController extends Controller
             return;
         }
 
-        abort(404);
+        return Inertia::render('clients/view-client', [
+            'id' => $id
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateClientRequest $request, Client $client)
+    public function update(UpdateClientRequest $request, $id)
     {
         //
     }
@@ -94,14 +101,14 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Client $client)
+    public function destroy($id)
     {
         //
     }
 
-    /**
-     * Check for duplication when registering/updating clients.
-     * Note: This does not enforce each client must have unique information.
-     */
-    public function check_for_duplication(StoreClientRequest $request) {}
+    // /**
+    //  * Check for duplication when registering/updating clients.
+    //  * Note: This does not enforce each client must have unique information.
+    //  */
+    // public function check_for_duplication(StoreClientRequest $request) {}
 }

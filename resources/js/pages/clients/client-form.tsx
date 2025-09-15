@@ -38,12 +38,14 @@ export default function ClientForm({ id, clientData }: {id: number, clientData?:
     console.log(clientData);
     console.log(id);
 
+    const defaultCode = 'ID';
+
     const { data, setData, errors, processing, post, patch } = useForm<Required<ClientData>>({
         id: '',
         name: '',
         address: '',
         email: '',
-        phone_code: '',
+        phone_code: defaultCode,
         phone: '',
     });
 
@@ -51,7 +53,6 @@ export default function ClientForm({ id, clientData }: {id: number, clientData?:
 
     const [countryCodeList, setCountryCodeList] = useState<CountryCode[]>([]);
     const [selectedCountryCode, setSelectedCountryCode] = useState<CountryCode>();
-    const defaultCode = 'ID';
 
     useEffect(() => {
         axios.get(route('api.utility.country-code')).then((response) => {
@@ -202,6 +203,7 @@ export default function ClientForm({ id, clientData }: {id: number, clientData?:
                                     </span>
 
                                     <InputError className="mt-2" message={errors.phone} />
+                                    <InputError className="mt-2" message={errors.phone_code} />
                                 </div>
 
                                 <div className="flex items-center gap-4">
