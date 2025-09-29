@@ -36,9 +36,7 @@ class ClientController extends Controller
             return redirect()->back();
         } 
         
-        return Inertia::render('clients/client-form', [
-            'id' => -1
-        ]);
+        return Inertia::render('clients/client-form');
     }
 
     /**
@@ -61,13 +59,19 @@ class ClientController extends Controller
             return redirect()->back();
         } 
 
-        // if (empty(trim($id))) {
-        //     abort(404);
-        //     return;
-        // }
+        if (empty(trim($id))) {
+            abort(404);
+            return;
+        }
+
+        $client = Client::find($id);
+        if (empty($client)) {
+            abort(404);
+            return;
+        }
 
         return Inertia::render('clients/view-client', [
-            'id' => -1
+            'client' => $client
         ]);
     }
 
@@ -85,25 +89,53 @@ class ClientController extends Controller
             return;
         }
 
-        return Inertia::render('clients/view-client', [
-            'id' => $id
+        $client = Client::find($id);
+        if (empty($client)) {
+            abort(404);
+            return;
+        }
+
+        return Inertia::render('clients/client-form', [
+            'client' => $client
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateClientRequest $request, $id)
+    public function update(UpdateClientRequest $request)
     {
-        //
+        $client = Client::find($request->id);
+        if (empty($client)) {
+            abort(404);
+            return;
+        }
+
+        $new_data = $request->validated();
+        $client->update($new_data);
+
+        return to_route('clients')->with('message', 'Client edited!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        if ($request->user()->admin != 1) {
+            abort(403);
+            return;
+        } 
+
+        $client = Client::find($request->id);
+        if (empty($client)) {
+            abort(404);
+            return;
+        }
+
+        $client->delete();
+
+        return to_route('clients')->with('message', 'Client deleted!');
     }
 
     // /**

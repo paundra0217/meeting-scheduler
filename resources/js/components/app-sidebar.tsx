@@ -4,24 +4,19 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Building2, User, CalendarDays, CalendarRange } from 'lucide-react';
+import { Building2, CalendarDays, CalendarRange, Settings, User } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
+        title: 'Schedule',
+        href: '/schedule',
+        icon: CalendarRange,
     },
     {
         title: 'Meetings',
         href: '/meetings',
         icon: CalendarDays,
-    },
-    {
-        title: 'Schedule',
-        href: '/schedule',
-        icon: CalendarRange,
     },
     {
         title: 'Users',
@@ -32,6 +27,11 @@ const mainNavItems: NavItem[] = [
         title: 'Clients',
         href: '/clients',
         icon: Building2,
+    },
+    {
+        title: 'Configuration',
+        href: '/configuration',
+        icon: Settings,
     },
 ];
 
@@ -55,7 +55,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href="/dashboard" prefetch>
+                            <Link href="/" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

@@ -8,10 +8,19 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { useForm } from '@inertiajs/react';
 import { Button } from './ui/button';
 
-export default function DeleteClient({ id, name }: { id: string, name: string }) {
+export default function DeleteClient({ id, name }: { id: string; name: string }) {
     console.log(id);
+
+    const { processing, delete: destroy } = useForm({
+        id: id,
+    });
+
+    const submit = () => {
+        destroy(route('api.clients.delete'));
+    };
 
     return (
         <Dialog>
@@ -28,11 +37,11 @@ export default function DeleteClient({ id, name }: { id: string, name: string })
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="sm:justify-start">
-                    <Button type="button" variant="destructive">
+                    <Button type="button" variant="destructive" onClick={submit} disabled={processing}>
                         Delete
                     </Button>
                     <DialogClose asChild>
-                        <Button type="button" variant="secondary">
+                        <Button type="button" variant="secondary" disabled={processing}>
                             Cancel
                         </Button>
                     </DialogClose>

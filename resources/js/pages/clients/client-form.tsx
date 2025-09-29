@@ -32,21 +32,26 @@ type CountryCode = {
 
 // const rawRoute: any = route('');
 
-export default function ClientForm({ id, clientData }: {id: number, clientData?: ClientData}) {
+export default function ClientForm({ id, client }: { id: number; client?: ClientData }) {
     // const { auth } = usePage<SharedData>().props;
 
-    console.log(clientData);
-    console.log(id);
+    const addTitle = "Add Title";
+    const editTitle = "Edit Client";
+
+    const addDesc = "Add client and their information and representatives here.";
+    const editDesc = "Edit client and their information and representatives here.";
+
+    console.log(client);
 
     const defaultCode = 'ID';
 
     const { data, setData, errors, processing, post, patch } = useForm<Required<ClientData>>({
-        id: '',
-        name: '',
-        address: '',
-        email: '',
-        phone_code: defaultCode,
-        phone: '',
+        id: client?.id ?? '',
+        name: client?.email ?? '',
+        address: client?.address ?? '',
+        email: client?.email ?? '',
+        phone_code: client?.phone_code ?? defaultCode,
+        phone: client?.phone ?? '',
     });
 
     // console.log(auth.user);
@@ -77,20 +82,20 @@ export default function ClientForm({ id, clientData }: {id: number, clientData?:
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        
-        if (id === -1) {
-            post(route('api.clients.add'))
-        } else {
-            patch(route('api.clients.edit'))
-        }
+        console.log(route('api.clients.edit', id));
 
+        if (client) {
+            patch(route('api.clients.edit', id));
+        } else {
+            post(route('api.clients.add'));
+        }
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Add Client" />
+            <Head title={client ? editTitle : addTitle} />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl px-4 py-6">
-                <Heading title="Add Client" description="Add client and their information and representatives here." />
+                <Heading title={client ? editTitle : addTitle} description={client ? editDesc : addDesc} />
 
                 {/* Loading Section */}
                 {countryCodeList.length <= 0 && (
@@ -207,7 +212,7 @@ export default function ClientForm({ id, clientData }: {id: number, clientData?:
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                    <Button disabled={processing}>Add</Button>
+                                    <Button disabled={processing}>{client ? "Edit" : "Add"}</Button>
                                 </div>
                             </form>
                         </div>

@@ -10,8 +10,8 @@ export default function ClientListCard({ data }: { data: ClientListCardData }) {
     const edited = DateTime.fromISO(data.updated_at);
     const addedText = added.toLocaleString(DateTime.DATETIME_FULL);
     const editedText = edited.toLocaleString(DateTime.DATETIME_FULL);
-    const lastAdded = added.toRelativeCalendar();
-    const lastEdited = edited.toRelativeCalendar();
+    const lastAdded = added.toRelative();
+    const lastEdited = edited.toRelative();
 
     return (
         <div className="flex min-h-8 flex-col gap-6 overflow-hidden rounded-xl border border-sidebar-border/70 p-6 lg:flex-row lg:items-center lg:justify-between dark:border-sidebar-border">
@@ -20,7 +20,7 @@ export default function ClientListCard({ data }: { data: ClientListCardData }) {
                 <div className="text-sm">
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <p className='w-fit'>{`Last Updated ${lastEdited}`}</p>
+                            <p className='w-fit'>{`Last Updated: ${lastEdited}`}</p>
                         </TooltipTrigger>
                         <TooltipContent side='right'>
                             <p>{`Added: ${addedText} (${lastAdded})`}</p>
