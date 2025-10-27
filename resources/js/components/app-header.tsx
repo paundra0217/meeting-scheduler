@@ -11,25 +11,20 @@ import { useInitials } from '@/hooks/use-initials';
 import { cn } from '@/lib/utils';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { Building2, CalendarDays, CalendarRange, LayoutGrid, Menu, User } from 'lucide-react';
+import { Building2, CalendarDays, CalendarRange, Menu, Settings, User } from 'lucide-react';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutGrid,
+        title: 'Schedule',
+        href: '/schedule',
+        icon: CalendarRange,
     },
     {
         title: 'Meetings',
         href: '/meetings',
         icon: CalendarDays,
-    },
-    {
-        title: 'Schedule',
-        href: '/schedule',
-        icon: CalendarRange,
     },
     {
         title: 'Users',
@@ -41,7 +36,14 @@ const mainNavItems: NavItem[] = [
         href: '/clients',
         icon: Building2,
     },
+    {
+        title: 'Configuration',
+        href: '/configuration',
+        icon: Settings,
+    },
 ];
+
+const adminOnlyItems: string[] = ['Configuration'];
 
 const rightNavItems: NavItem[] = [
     // {
@@ -66,6 +68,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
     const page = usePage<SharedData>();
     const { auth } = page.props;
     const getInitials = useInitials();
+    
     return (
         <>
             <div className="border-b border-sidebar-border/80">
@@ -86,12 +89,29 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                 <div className="flex h-full flex-1 flex-col space-y-4 p-4">
                                     <div className="flex h-full flex-col justify-between text-sm">
                                         <div className="flex flex-col space-y-4">
-                                            {mainNavItems.map((item) => (
-                                                <Link key={item.title} href={item.href} className="flex items-center space-x-2 font-medium">
-                                                    {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
-                                                    <span>{item.title}</span>
-                                                </Link>
-                                            ))}
+                                            {mainNavItems.map((item) => {
+                                                if (adminOnlyItems.includes(item.title)) {
+                                                    if (auth.user.admin === 1) {
+                                                        return (
+                                                            <Link
+                                                                key={item.title}
+                                                                href={item.href}
+                                                                className="flex items-center space-x-2 font-medium"
+                                                            >
+                                                                {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
+                                                                <span>{item.title}</span>
+                                                            </Link>
+                                                        );
+                                                    }
+                                                } else {
+                                                    return (
+                                                        <Link key={item.title} href={item.href} className="flex items-center space-x-2 font-medium">
+                                                            {item.icon && <Icon iconNode={item.icon} className="h-5 w-5" />}
+                                                            <span>{item.title}</span>
+                                                        </Link>
+                                                    );
+                                                }
+                                            })}
                                         </div>
 
                                         <div className="flex flex-col space-y-4">

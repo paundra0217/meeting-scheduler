@@ -37,7 +37,25 @@ export interface User {
     email: string;
     avatar?: string;
     email_verified_at: string | null;
+    admin: number;
     created_at: string;
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
+}
+
+export interface ClientData {
+    id: string;
+    name: string;
+    email: string;
+    phone_code: string;
+    address: string;
+    phone: string;
+};
+
+export interface ClientListCardData {
+    id: string;
+    name: string;
+    created_at: string;
+    updated_at: string;
+    upcoming_meetings: number;
 }

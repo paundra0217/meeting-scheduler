@@ -2,8 +2,8 @@
 
 use App\Models\User;
 
-test('login screen can be rendered', function () {
-    $response = $this->get('login');
+test('initial screen can be rendered (when there is no user)', function () {
+    $response = $this->get('/register');
 
     $response->assertStatus(200);
 });
