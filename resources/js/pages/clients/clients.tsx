@@ -35,13 +35,18 @@ export default function Clients({ status, clients }: { status?: number, clients:
                 <div className="flex justify-between">
                     <Heading
                         title="Clients"
-                        description="Manage list of clients, their information about the client, and the client representatives."
+                        description="Manage list of clients, and their information about the client"
                     />
                     <Button asChild>
                         <Link href={route('clients.add')}>Add Client</Link>
                     </Button>
                 </div>
                 <div className="flex flex-col gap-4">
+                    {
+                        clients.length == 0 && (
+                            <p className='text-center'>No clients available. Begin by adding the "Add Client" button.</p>
+                        )
+                    }
                     {clients.map((client) => {
                         return(
                             <ClientListCard data={client} />

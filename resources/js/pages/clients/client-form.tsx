@@ -47,7 +47,7 @@ export default function ClientForm({ id, client }: { id: number; client?: Client
 
     const { data, setData, errors, processing, post, patch } = useForm<Required<ClientData>>({
         id: client?.id ?? '',
-        name: client?.email ?? '',
+        name: client?.name ?? '',
         address: client?.address ?? '',
         email: client?.email ?? '',
         phone_code: client?.phone_code ?? defaultCode,
